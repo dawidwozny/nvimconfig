@@ -1,4 +1,6 @@
--- Override Neovim 0.11+ built-in LSP mappings with snacks.picker
+-- Use snacks.picker for LSP references (grr)
+-- This gives a modern picker UI with live preview, instead of the default quickfix/loclist.
+-- Always wins over built-in Neovim mappings by running on LspAttach.
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("snacks_lsp_overrides", { clear = true }),
   callback = function(args)
