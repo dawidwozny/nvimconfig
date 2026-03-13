@@ -1,5 +1,9 @@
-if true then return end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
--- This will run last in the setup process.
--- This is just pure lua so anything that doesn't
--- fit in the normal config locations above can go here
+-- Override Neovim 0.11+ built-in LSP mappings with snacks.picker
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("snacks_lsp_overrides", { clear = true }),
+  callback = function(args)
+    vim.keymap.set("n", "grr", function()
+      require("snacks.picker").lsp_references()
+    end, { buffer = args.buf, desc = "References (snacks)" })
+  end,
+})
