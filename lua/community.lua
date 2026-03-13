@@ -8,6 +8,7 @@ return {
   { import = "astrocommunity.pack.lua" },
   { import = "astrocommunity.pack.typescript" },
   { import = "astrocommunity.pack.svelte" },
+  { import = "astrocommunity.test.neotest" },
   { import = "astrocommunity.motion.flash-nvim" },
   -- import/override with your plugins folder
 }
