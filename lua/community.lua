@@ -10,5 +10,6 @@ return {
   { import = "astrocommunity.pack.svelte" },
   { import = "astrocommunity.test.neotest" },
   { import = "astrocommunity.motion.flash-nvim" },
+  { import = "astrocommunity.pack.rust" },
   -- import/override with your plugins folder
 }
