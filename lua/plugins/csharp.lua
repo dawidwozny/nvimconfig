@@ -53,6 +53,13 @@ return {
     opts = {
       broad_search = true,
       lock_target = true,
+      config = {
+        on_attach = function(client, bufnr)
+          if client.server_capabilities.semanticTokensProvider then
+            vim.lsp.semantic_tokens.start(bufnr, client.id)
+          end
+        end,
+      },
     },
   },
   {

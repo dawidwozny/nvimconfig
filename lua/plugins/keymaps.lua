@@ -7,6 +7,7 @@ return {
       mappings = {
         n = {
           ["<Leader>tl"] = false,
+          ["<Leader>bn"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
           ["<Leader>tg"] = {
             function()
               local astro = require("astrocore")
