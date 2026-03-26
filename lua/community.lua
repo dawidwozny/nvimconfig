@@ -11,5 +11,9 @@ return {
   { import = "astrocommunity.test.neotest" },
   { import = "astrocommunity.motion.flash-nvim" },
   { import = "astrocommunity.pack.rust" },
+  { import = "astrocommunity.pack.docker" },
+  { import = "astrocommunity.pack.yaml" },
+  { import = "astrocommunity.pack.helm" },
+  { import = "astrocommunity.docker.lazydocker" },
   -- import/override with your plugins folder
 }
