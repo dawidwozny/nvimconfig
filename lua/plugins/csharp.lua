@@ -72,8 +72,11 @@ return {
   {
     "mfussenegger/nvim-dap",
     optional = true,
-    config = function()
+    config = function(plugin, opts)
+      require("astronvim.plugins.configs.nvim-dap")(plugin, opts)
+
       local dap = require "dap"
+      -- dap.set_log_level("TRACE")
 
       dap.adapters.coreclr = {
         type = "executable",
@@ -81,16 +84,51 @@ return {
         args = { "--interpreter=vscode" },
       }
 
-      dap.configurations.cs = {
-        {
-          type = "coreclr",
-          name = "Launch .NET DLL",
-          request = "launch",
-          program = function()
-            return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "\\bin\\Debug\\", "file")
-          end,
-        },
-      }
+      -- Fix breakpoint source paths: nvim sends forward slashes but netcoredbg needs backslashes on Windows
+      local original_run = dap.run
+      dap.run = function(config, run_opts)
+        if config and config.type == "coreclr" then
+          local root = vim.fn.getcwd()
+          local function resolve(val)
+            if type(val) == "string" then
+              return val:gsub("%${workspaceFolder}", root):gsub("%${fileDirname}", vim.fn.expand("%:p:h"))
+            elseif type(val) == "table" then
+              local t = {}
+              for k, v in pairs(val) do t[k] = resolve(v) end
+              return t
+            end
+            return val
+          end
+          config = resolve(config)
+          config.justMyCode = false
+          config.preLaunchTask = nil
+          config.postDebugTask = nil
+          config.console = nil
+          config.serverReadyAction = nil
+          config.sourceFileMap = nil
+        end
+        return original_run(config, run_opts)
+      end
+
+      -- Fix Windows path separators: netcoredbg needs backslashes but Neovim sends forward slashes
+      -- Intercept the session's request method to fix paths in setBreakpoints
+      dap.listeners.after.event_initialized["fix-win-paths"] = function(session)
+        local orig_request = session.request
+        session.request = function(self, command, arguments, callback)
+          if command == "setBreakpoints" and arguments and arguments.source and arguments.source.path then
+            arguments.source.path = arguments.source.path:gsub("/", "\\")
+            if arguments.source.name then
+              arguments.source.name = arguments.source.name:gsub("/", "\\")
+            end
+          end
+          return orig_request(self, command, arguments, callback)
+        end
+        -- Re-send breakpoints now with fixed paths
+        local bps = require("dap.breakpoints").get()
+        if vim.tbl_count(bps) > 0 then
+          session:set_breakpoints(bps)
+        end
+      end
     end,
   },
   {
