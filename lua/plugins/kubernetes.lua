@@ -4,8 +4,7 @@ return {
     "ramilito/kubectl.nvim",
     version = "2.*",
     keys = {
-      { "<Leader>k", "", desc = "+Kubectl" },
-      { "<Leader>kk", function() require("kubectl").toggle() end, desc = "Toggle Kubectl" },
+      { "<Leader>tk", function() require("kubectl").toggle() end, desc = "Toggle Kubectl" },
     },
     build = function(plugin)
       local target_dir = plugin.dir .. "/target/release"
