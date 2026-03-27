@@ -82,6 +82,7 @@ return {
         type = "executable",
         command = vim.fn.stdpath("data") .. "/mason/packages/netcoredbg/netcoredbg/netcoredbg.exe",
         args = { "--interpreter=vscode" },
+        options = { detached = false },
       }
 
       -- Fix breakpoint source paths: nvim sends forward slashes but netcoredbg needs backslashes on Windows
@@ -101,9 +102,9 @@ return {
           end
           config = resolve(config)
           config.justMyCode = false
+          config.console = "internalConsole"
           config.preLaunchTask = nil
           config.postDebugTask = nil
-          config.console = nil
           config.serverReadyAction = nil
           config.sourceFileMap = nil
         end
