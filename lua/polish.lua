@@ -116,36 +116,3 @@ do
     end
   end
 end
-
--- Register Node.js DAP adapter (js-debug via Mason) for launch.json "type": "node"
-do
-  local dap_ok, dap = pcall(require, "dap")
-  if dap_ok then
-    dap.set_log_level("TRACE")
-
-    local js_debug_path = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter"
-
-    dap.adapters["pwa-node"] = {
-      type = "server",
-      host = "127.0.0.1",
-      port = "${port}",
-      executable = {
-        command = "node",
-        args = { js_debug_path .. "/js-debug/src/dapDebugServer.js", "${port}", "127.0.0.1" },
-      },
-    }
-
-    dap.adapters["node"] = dap.adapters["pwa-node"]
-
-    -- Test config: run with F5 on a .js file (uses internalConsole, no terminal)
-    dap.configurations.javascript = {
-      {
-        type = "pwa-node",
-        request = "launch",
-        name = "Launch File (internal console)",
-        program = "${file}",
-        cwd = "${workspaceFolder}",
-      },
-    }
-  end
-end
