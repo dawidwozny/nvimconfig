@@ -15,5 +15,6 @@ return {
   { import = "astrocommunity.pack.yaml" },
   { import = "astrocommunity.pack.helm" },
   { import = "astrocommunity.docker.lazydocker" },
+  { import = "astrocommunity.completion.copilot-lua" },
   -- import/override with your plugins folder
 }
