@@ -1,3 +1,24 @@
+-- Enable proper auto-indentation (e.g., YAML, Python, etc.)
+vim.opt.autoindent = true
+vim.opt.smartindent = true
+vim.cmd("filetype indent on")
+
+-- Disable treesitter indent for YAML.
+-- Treesitter's YAML indent support is broken/incomplete, leaving indentexpr empty.
+-- This forces Neovim's built-in YAML indent plugin to handle indentation instead.
+-- We use vim.schedule to ensure this runs AFTER treesitter sets indentexpr.
+vim.api.nvim_create_autocmd({ "FileType", "BufEnter" }, {
+  pattern = { "yaml", "yaml.*" },
+  callback = function()
+    vim.schedule(function()
+      if vim.bo.filetype == "yaml" or vim.bo.filetype:match("^yaml%.") then
+        vim.cmd("runtime! indent/yaml.vim")
+        vim.bo.indentexpr = "GetYAMLIndent()"
+      end
+    end)
+  end,
+})
+
 -- Use snacks.picker for LSP references (grr)
 -- This gives a modern picker UI with live preview, instead of the default quickfix/loclist.
 -- Always wins over built-in Neovim mappings by running on LspAttach.
