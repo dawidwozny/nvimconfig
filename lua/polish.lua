@@ -31,6 +31,28 @@ vim.api.nvim_create_autocmd({ "FileType", "BufEnter" }, {
   end,
 })
 
+-- Avante scratch buffers are hitting Tree-sitter/illuminate issues on Neovim 0.12.
+-- Keep those helpers detached there while leaving normal editing buffers unchanged.
+local avante_fts = {
+  "Avante",
+  "AvanteInput",
+  "AvantePromptInput",
+  "AvanteSelectedCode",
+  "AvanteSelectedFiles",
+  "AvanteTodos",
+}
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = avante_fts,
+  callback = function(args)
+    vim.schedule(function()
+      pcall(vim.treesitter.stop, args.buf)
+      local ok, illuminate = pcall(require, "illuminate")
+      if ok then pcall(illuminate.pause_buf, args.buf) end
+    end)
+  end,
+})
+
 -- Use snacks.picker for LSP references (grr)
 -- This gives a modern picker UI with live preview, instead of the default quickfix/loclist.
 -- Always wins over built-in Neovim mappings by running on LspAttach.
