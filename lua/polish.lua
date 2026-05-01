@@ -1,3 +1,15 @@
+-- Signal to WezTerm that this pane is running Neovim (for smart-splits navigation)
+vim.api.nvim_create_autocmd({ "VimEnter", "VimResume" }, {
+  callback = function()
+    io.write("\x1b]1337;SetUserVar=IS_NVIM=dHJ1ZQ==\x07") -- base64("true")
+  end,
+})
+vim.api.nvim_create_autocmd({ "VimLeave", "VimSuspend" }, {
+  callback = function()
+    io.write("\x1b]1337;SetUserVar=IS_NVIM=\x07") -- clear the var
+  end,
+})
+
 -- Enable proper auto-indentation (e.g., YAML, Python, etc.)
 vim.opt.autoindent = true
 vim.opt.smartindent = true
